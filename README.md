@@ -1,4 +1,4 @@
-# Aetherwild - Juego estilo Pokémon en C++
+# Aetherwild
 
 Un juego estilo Pokémon desarrollado en C++ usando SDL3, con arquitectura modular y soporte para compilación multiplataforma.
 
