@@ -16,8 +16,8 @@ set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
 set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
 
 # Incluir directorios
-include_directories(${CMAKE_SOURCE_DIR}/include/**)
-include_directories(${CMAKE_SOURCE_DIR}/src/**)
+include_directories(${CMAKE_SOURCE_DIR}/include)
+include_directories(${CMAKE_SOURCE_DIR}/src)
 
 # Buscar SDL3
 find_package(PkgConfig REQUIRED)

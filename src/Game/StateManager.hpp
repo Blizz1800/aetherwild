@@ -1,8 +1,5 @@
-#ifndef _STATEMANAGER_HPP
-#define _STATEMANAGER_HPP
+#pragma once
 
 class StateManager{
 	// Code here...
 };
-
-#endif

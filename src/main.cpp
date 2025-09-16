@@ -1,4 +1,3 @@
-#include <SDL2/SDL.h>
 #include <iostream>
 #include "Game/Game.hpp"
 
@@ -6,7 +5,7 @@ int main()
 {
     try
     {
-        Game game;
+        GameClass game;
         game.run();
     }
     catch (const std::exception &e)

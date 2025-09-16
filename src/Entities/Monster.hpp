@@ -1,8 +1,6 @@
-#ifndef _MONSTER_HPP
-#define _MONSTER_HPP
+#pragma once
 
-class Monster{
+class Monster
+{
 	// Code here...
 };
-
-#endif

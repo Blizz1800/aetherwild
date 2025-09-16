@@ -1,8 +1,6 @@
-#ifndef _NPC_HPP
-#define _NPC_HPP
+#pragma once
 
-class NPC{
+class NPC
+{
 	// Code here...
 };
-
-#endif

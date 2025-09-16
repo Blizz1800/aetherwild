@@ -1,8 +1,6 @@
-#ifndef _MAP_HPP
-#define _MAP_HPP
+#pragma once
 
-class Map{
+class Map
+{
 	// Code here...
 };
-
-#endif

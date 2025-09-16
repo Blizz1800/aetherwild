@@ -1,8 +1,5 @@
-#ifndef _INPUTMANAGER_HPP
-#define _INPUTMANAGER_HPP
+#pragma once
 
 class InputManager{
 	// Code here...
 };
-
-#endif

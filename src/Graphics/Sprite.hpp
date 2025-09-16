@@ -1,8 +1,6 @@
-#ifndef _SPRITE_HPP
-#define _SPRITE_HPP
+#pragma once
 
-class Sprite{
+class Sprite
+{
 	// Code here...
 };
-
-#endif

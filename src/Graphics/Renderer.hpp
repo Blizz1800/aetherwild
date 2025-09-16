@@ -1,8 +1,6 @@
-#ifndef _RENDERER_HPP
-#define _RENDERER_HPP
+#pragma once
 
-class Renderer{
+class Renderer
+{
 	// Code here...
 };
-
-#endif

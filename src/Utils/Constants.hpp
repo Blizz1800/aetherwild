@@ -1,8 +1,13 @@
-#ifndef _CONSTANTS_HPP
-#define _CONSTANTS_HPP
+#pragma once
 
-class Constants{
-	// Code here...
-};
+#include <string>
 
-#endif
+namespace Game
+{
+	namespace Constants
+	{
+		extern const char *TITLE;
+		extern const int SCREEN_WIDTH;
+		extern const int SCREEN_HEIGHT;
+	}
+}

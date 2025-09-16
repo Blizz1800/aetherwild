@@ -1,8 +1,6 @@
-#ifndef _ENTITY_HPP
-#define _ENTITY_HPP
+#pragma once
 
-class Entity{
+class Entity
+{
 	// Code here...
 };
-
-#endif

@@ -1,8 +1,6 @@
-#ifndef _COLLISION_HPP
-#define _COLLISION_HPP
+#pragma once
 
-class Collision{
+class Collision
+{
 	// Code here...
 };
-
-#endif

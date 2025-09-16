@@ -1,8 +1,6 @@
-#ifndef _PLAYER_HPP
-#define _PLAYER_HPP
+#pragma once
 
-class Player{
+class Player
+{
 	// Code here...
 };
-
-#endif

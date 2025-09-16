@@ -1,8 +1,6 @@
-#ifndef _TIMER_HPP
-#define _TIMER_HPP
+#pragma once
+
 
 class Timer{
 	// Code here...
 };
-
-#endif

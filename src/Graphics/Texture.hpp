@@ -1,8 +1,6 @@
-#ifndef _TEXTURE_HPP
-#define _TEXTURE_HPP
+#pragma once
 
-class Texture{
+class Texture
+{
 	// Code here...
 };
-
-#endif

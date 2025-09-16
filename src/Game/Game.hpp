@@ -1,24 +1,24 @@
-#ifndef _GAME_HPP
-#define _GAME_HPP
+#pragma once
 
-#include <SDL2/SDL.h>
+#include <SDL3/SDL.h>
+#include <SDL3/SDL_main.h>
+#include <SDL3/SDL_video.h>
+#include <string>
 #include <memory>
 
-// class Renderer;
-// class InputManager;
-// class StateManager;
+#include "Utils/Constants.hpp"
 
-class Game {
+class GameClass {
 public:
-    Game();
-    ~Game();
+    GameClass();
+    ~GameClass();
     
-    static void run();
+    void run();
     void init();
     void cleanup();
+    void close();
     
-    static const int SCREEN_WIDTH = 800;
-    static const int SCREEN_HEIGHT = 600;
+    
     static const int FPS = 60;
 
 private:
@@ -27,11 +27,10 @@ private:
     void render();
     
     SDL_Window* m_window;
+    SDL_Surface* m_screenSurface;
     bool m_running;
     
-    // std::unique_ptr<Renderer> m_renderer;
+    SDL_Renderer* m_renderer;
     // std::unique_ptr<InputManager> m_inputManager;
     // std::unique_ptr<StateManager> m_stateManager;
 };
-
-#endif

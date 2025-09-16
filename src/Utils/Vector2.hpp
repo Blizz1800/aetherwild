@@ -1,8 +1,5 @@
-#ifndef _VECTOR2_HPP
-#define _VECTOR2_HPP
+#pragma once
 
 class Vector2{
 	// Code here...
 };
-
-#endif

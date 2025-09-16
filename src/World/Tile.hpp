@@ -1,8 +1,6 @@
-#ifndef _TILE_HPP
-#define _TILE_HPP
+#pragma once
 
-class Tile{
+class Tile
+{
 	// Code here...
 };
-
-#endif

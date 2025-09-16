@@ -1,8 +1,5 @@
-#ifndef _GAMESTATE_HPP
-#define _GAMESTATE_HPP
+#pragma once
 
 class GameState{
 	// Code here...
 };
-
-#endif
