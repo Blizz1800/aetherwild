@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 4.1.1)
-project(Arkadia VERSION 1.0.0)
+project(Aetherwild VERSION 1.0.0)
 
 # Configuración del estándar C
 set(CMAKE_C_STANDARD 23)
