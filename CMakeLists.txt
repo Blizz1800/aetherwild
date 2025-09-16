@@ -8,6 +8,8 @@ set(CMAKE_C_STANDARD 23)
 set(CMAKE_CXX_STANDARD 26)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
+set(BUILD_SHARED_LIBS ON)
+
 # Configuración de directorios
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
@@ -43,27 +45,77 @@ message(DEBUG ${HEADERS})
 # Crear ejecutable
 add_executable(${PROJECT_NAME} ${SOURCES} ${HEADERS})
 
-# Enlazar bibliotecas
 target_link_libraries(${PROJECT_NAME} 
-    ${SDL_LIBRARIES}
-    ${SDL_IMAGE_LIBRARIES}
-    ${SDL_TTF_LIBRARIES}
-    ${SDL_MIXER_LIBRARIES}
+    ${SDL3_LIBRARIES}
+    ${SDL3_IMAGE_LIBRARIES}
+    ${SDL3_TTF_LIBRARIES}
+    ${SDL3_MIXER_LIBRARIES}
 )
 
-# Incluir directorios de SDL3
 target_include_directories(${PROJECT_NAME} PRIVATE 
-    ${SDL_INCLUDE_DIRS}
-    ${SDL_IMAGE_INCLUDE_DIRS}
-    ${SDL_TTF_INCLUDE_DIRS}
-    ${SDL_MIXER_INCLUDE_DIRS}
+    ${SDL3_INCLUDE_DIRS}
+    ${SDL3_IMAGE_INCLUDE_DIRS}
+    ${SDL3_TTF_INCLUDE_DIRS}
+    ${SDL3_MIXER_INCLUDE_DIRS}
 )
 
-# Flags de compilación
 target_compile_options(${PROJECT_NAME} PRIVATE 
-    ${SDL_CFLAGS_OTHER}
+    ${SDL3_CFLAGS_OTHER}
     -Wall -Wextra -O2
 )
+
+function(copy_dynamic_libraries target)
+    if(WIN32)
+        # Windows - buscar y copiar DLLs de SDL3
+        find_file(SDL3_DLL NAMES SDL3.dll PATHS ${SDL3_LIBRARY_DIRS} PATH_SUFFIXES bin)
+        find_file(SDL3_IMAGE_DLL NAMES SDL3_image.dll PATHS ${SDL3_IMAGE_LIBRARY_DIRS} PATH_SUFFIXES bin)
+        find_file(SDL3_TTF_DLL NAMES SDL3_ttf.dll PATHS ${SDL3_TTF_LIBRARY_DIRS} PATH_SUFFIXES bin)
+        find_file(SDL3_MIXER_DLL NAMES SDL3_mixer.dll PATHS ${SDL3_MIXER_LIBRARY_DIRS} PATH_SUFFIXES bin)
+        
+        if(SDL3_DLL)
+            add_custom_command(TARGET ${target} POST_BUILD
+                COMMAND ${CMAKE_COMMAND} -E copy_if_different ${SDL3_DLL} $<TARGET_FILE_DIR:${target}>)
+        endif()
+        if(SDL3_IMAGE_DLL)
+            add_custom_command(TARGET ${target} POST_BUILD
+                COMMAND ${CMAKE_COMMAND} -E copy_if_different ${SDL3_IMAGE_DLL} $<TARGET_FILE_DIR:${target}>)
+        endif()
+        if(SDL3_TTF_DLL)
+            add_custom_command(TARGET ${target} POST_BUILD
+                COMMAND ${CMAKE_COMMAND} -E copy_if_different ${SDL3_TTF_DLL} $<TARGET_FILE_DIR:${target}>)
+        endif()
+        if(SDL3_MIXER_DLL)
+            add_custom_command(TARGET ${target} POST_BUILD
+                COMMAND ${CMAKE_COMMAND} -E copy_if_different ${SDL3_MIXER_DLL} $<TARGET_FILE_DIR:${target}>)
+        endif()
+        
+    elseif(APPLE)
+        # macOS - buscar y copiar dylibs de SDL3
+        foreach(lib ${SDL3_LIBRARIES} ${SDL3_IMAGE_LIBRARIES} ${SDL3_TTF_LIBRARIES} ${SDL3_MIXER_LIBRARIES})
+            get_filename_component(lib_name ${lib} NAME_WE)
+            find_library(${lib_name}_DYLIB NAMES ${lib_name}.dylib PATHS ${SDL3_LIBRARY_DIRS} ${SDL3_IMAGE_LIBRARY_DIRS} ${SDL3_TTF_LIBRARY_DIRS} ${SDL3_MIXER_LIBRARY_DIRS})
+            if(${lib_name}_DYLIB)
+                add_custom_command(TARGET ${target} POST_BUILD
+                    COMMAND ${CMAKE_COMMAND} -E copy_if_different ${${lib_name}_DYLIB} $<TARGET_FILE_DIR:${target}>)
+            endif()
+        endforeach()
+        
+    else()
+        # Linux - buscar y copiar .so files de SDL3
+        foreach(lib_dir ${SDL3_LIBRARY_DIRS} ${SDL3_IMAGE_LIBRARY_DIRS} ${SDL3_TTF_LIBRARY_DIRS} ${SDL3_MIXER_LIBRARY_DIRS})
+            file(GLOB SO_FILES "${lib_dir}/*.so*")
+            foreach(so_file ${SO_FILES})
+                get_filename_component(so_name ${so_file} NAME)
+                if(so_name MATCHES "^lib(SDL3|SDL3_image|SDL3_ttf|SDL3_mixer)")
+                    add_custom_command(TARGET ${target} POST_BUILD
+                        COMMAND ${CMAKE_COMMAND} -E copy_if_different ${so_file} $<TARGET_FILE_DIR:${target}>)
+                endif()
+            endforeach()
+        endforeach()
+    endif()
+endfunction()
+
+copy_dynamic_libraries(${PROJECT_NAME})
 
 # Copiar assets al directorio de salida
 add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
@@ -71,10 +123,25 @@ add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
     ${CMAKE_SOURCE_DIR}/assets $<TARGET_FILE_DIR:${PROJECT_NAME}>/assets
 )
 
+if(UNIX AND NOT APPLE)
+    set_target_properties(${PROJECT_NAME} PROPERTIES
+        INSTALL_RPATH "$ORIGIN"
+        BUILD_WITH_INSTALL_RPATH TRUE
+    )
+elseif(APPLE)
+    set_target_properties(${PROJECT_NAME} PROPERTIES
+        INSTALL_RPATH "@executable_path"
+        BUILD_WITH_INSTALL_RPATH TRUE
+    )
+endif()
+
 # Configuración para diferentes sistemas operativos
 if(WIN32)
     # Configuración específica para Windows
     target_compile_definitions(${PROJECT_NAME} PRIVATE WINDOWS)
+    set_target_properties(${PROJECT_NAME} PROPERTIES
+        VS_DEBUGGER_WORKING_DIRECTORY $<TARGET_FILE_DIR:${PROJECT_NAME}>
+    )
 elseif(APPLE)
     # Configuración específica para macOS
     target_compile_definitions(${PROJECT_NAME} PRIVATE MACOS)
@@ -82,3 +149,13 @@ else()
     # Configuración específica para Linux
     target_compile_definitions(${PROJECT_NAME} PRIVATE LINUX)
 endif()
+
+add_custom_target(clean-libs
+    COMMAND ${CMAKE_COMMAND} -E remove_directory ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}
+    COMMENT "Cleaning copied libraries and executables"
+)
+
+message(STATUS "SDL3 Libraries: ${SDL3_LIBRARIES}")
+message(STATUS "SDL3 Library Dirs: ${SDL3_LIBRARY_DIRS}")
+message(STATUS "Build type: ${CMAKE_BUILD_TYPE}")
+message(STATUS "Output directory: ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}")
