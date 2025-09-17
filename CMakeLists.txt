@@ -22,8 +22,8 @@ include_directories(${CMAKE_SOURCE_DIR}/src)
 # Buscar SDL3
 find_package(PkgConfig REQUIRED)
 pkg_check_modules(SDL3 REQUIRED sdl3)
-pkg_check_modules(SDL_IMAGE REQUIRED SDL_image)
-pkg_check_modules(SDL_TTF REQUIRED SDL_ttf)
+pkg_check_modules(SDL_IMAGE REQUIRED sdl3-image)
+pkg_check_modules(SDL_TTF REQUIRED sdl3-ttf)
 pkg_check_modules(SDL_MIXER REQUIRED SDL_mixer)
 
 # Recopilar archivos fuente
@@ -47,16 +47,16 @@ add_executable(${PROJECT_NAME} ${SOURCES} ${HEADERS})
 
 target_link_libraries(${PROJECT_NAME} 
     ${SDL3_LIBRARIES}
-    ${SDL3_IMAGE_LIBRARIES}
-    ${SDL3_TTF_LIBRARIES}
-    ${SDL3_MIXER_LIBRARIES}
+    ${SDL_IMAGE_LIBRARIES}
+    ${SDL_TTF_LIBRARIES}
+    ${SDL_MIXER_LIBRARIES}
 )
 
 target_include_directories(${PROJECT_NAME} PRIVATE 
     ${SDL3_INCLUDE_DIRS}
-    ${SDL3_IMAGE_INCLUDE_DIRS}
-    ${SDL3_TTF_INCLUDE_DIRS}
-    ${SDL3_MIXER_INCLUDE_DIRS}
+    ${SDL_IMAGE_INCLUDE_DIRS}
+    ${SDL_TTF_INCLUDE_DIRS}
+    ${SDL_MIXER_INCLUDE_DIRS}
 )
 
 target_compile_options(${PROJECT_NAME} PRIVATE 
@@ -67,33 +67,33 @@ target_compile_options(${PROJECT_NAME} PRIVATE
 function(copy_dynamic_libraries target)
     if(WIN32)
         # Windows - buscar y copiar DLLs de SDL3
-        find_file(SDL3_DLL NAMES SDL3.dll PATHS ${SDL3_LIBRARY_DIRS} PATH_SUFFIXES bin)
-        find_file(SDL3_IMAGE_DLL NAMES SDL3_image.dll PATHS ${SDL3_IMAGE_LIBRARY_DIRS} PATH_SUFFIXES bin)
-        find_file(SDL3_TTF_DLL NAMES SDL3_ttf.dll PATHS ${SDL3_TTF_LIBRARY_DIRS} PATH_SUFFIXES bin)
-        find_file(SDL3_MIXER_DLL NAMES SDL3_mixer.dll PATHS ${SDL3_MIXER_LIBRARY_DIRS} PATH_SUFFIXES bin)
+        find_file(SDL_DLL NAMES SDL3.dll PATHS ${SDL3_LIBRARY_DIRS} PATH_SUFFIXES bin)
+        find_file(SDL_IMAGE_DLL NAMES SDL_image.dll PATHS ${SDL_IMAGE_LIBRARY_DIRS} PATH_SUFFIXES bin)
+        find_file(SDL_TTF_DLL NAMES SDL_ttf.dll PATHS ${SDL_TTF_LIBRARY_DIRS} PATH_SUFFIXES bin)
+        find_file(SDL_MIXER_DLL NAMES SDL_mixer.dll PATHS ${SDL_MIXER_LIBRARY_DIRS} PATH_SUFFIXES bin)
         
-        if(SDL3_DLL)
+        if(SDL_DLL)
             add_custom_command(TARGET ${target} POST_BUILD
-                COMMAND ${CMAKE_COMMAND} -E copy_if_different ${SDL3_DLL} $<TARGET_FILE_DIR:${target}>)
+                COMMAND ${CMAKE_COMMAND} -E copy_if_different ${SDL_DLL} $<TARGET_FILE_DIR:${target}>)
         endif()
-        if(SDL3_IMAGE_DLL)
+        if(SDL_IMAGE_DLL)
             add_custom_command(TARGET ${target} POST_BUILD
-                COMMAND ${CMAKE_COMMAND} -E copy_if_different ${SDL3_IMAGE_DLL} $<TARGET_FILE_DIR:${target}>)
+                COMMAND ${CMAKE_COMMAND} -E copy_if_different ${SDL_IMAGE_DLL} $<TARGET_FILE_DIR:${target}>)
         endif()
-        if(SDL3_TTF_DLL)
+        if(SDL_TTF_DLL)
             add_custom_command(TARGET ${target} POST_BUILD
-                COMMAND ${CMAKE_COMMAND} -E copy_if_different ${SDL3_TTF_DLL} $<TARGET_FILE_DIR:${target}>)
+                COMMAND ${CMAKE_COMMAND} -E copy_if_different ${SDL_TTF_DLL} $<TARGET_FILE_DIR:${target}>)
         endif()
-        if(SDL3_MIXER_DLL)
+        if(SDL_MIXER_DLL)
             add_custom_command(TARGET ${target} POST_BUILD
-                COMMAND ${CMAKE_COMMAND} -E copy_if_different ${SDL3_MIXER_DLL} $<TARGET_FILE_DIR:${target}>)
+                COMMAND ${CMAKE_COMMAND} -E copy_if_different ${SDL_MIXER_DLL} $<TARGET_FILE_DIR:${target}>)
         endif()
         
     elseif(APPLE)
         # macOS - buscar y copiar dylibs de SDL3
-        foreach(lib ${SDL3_LIBRARIES} ${SDL3_IMAGE_LIBRARIES} ${SDL3_TTF_LIBRARIES} ${SDL3_MIXER_LIBRARIES})
+        foreach(lib ${SDL_LIBRARIES} ${SDL_IMAGE_LIBRARIES} ${SDL_TTF_LIBRARIES} ${SDL_MIXER_LIBRARIES})
             get_filename_component(lib_name ${lib} NAME_WE)
-            find_library(${lib_name}_DYLIB NAMES ${lib_name}.dylib PATHS ${SDL3_LIBRARY_DIRS} ${SDL3_IMAGE_LIBRARY_DIRS} ${SDL3_TTF_LIBRARY_DIRS} ${SDL3_MIXER_LIBRARY_DIRS})
+            find_library(${lib_name}_DYLIB NAMES ${lib_name}.dylib PATHS ${SDL3_LIBRARY_DIRS} ${SDL_IMAGE_LIBRARY_DIRS} ${SDL_TTF_LIBRARY_DIRS} ${SDL_MIXER_LIBRARY_DIRS})
             if(${lib_name}_DYLIB)
                 add_custom_command(TARGET ${target} POST_BUILD
                     COMMAND ${CMAKE_COMMAND} -E copy_if_different ${${lib_name}_DYLIB} $<TARGET_FILE_DIR:${target}>)
@@ -102,11 +102,11 @@ function(copy_dynamic_libraries target)
         
     else()
         # Linux - buscar y copiar .so files de SDL3
-        foreach(lib_dir ${SDL3_LIBRARY_DIRS} ${SDL3_IMAGE_LIBRARY_DIRS} ${SDL3_TTF_LIBRARY_DIRS} ${SDL3_MIXER_LIBRARY_DIRS})
+        foreach(lib_dir ${SDL3_LIBRARY_DIRS} ${SDL_IMAGE_LIBRARY_DIRS} ${SDL_TTF_LIBRARY_DIRS} ${SDL_MIXER_LIBRARY_DIRS})
             file(GLOB SO_FILES "${lib_dir}/*.so*")
             foreach(so_file ${SO_FILES})
                 get_filename_component(so_name ${so_file} NAME)
-                if(so_name MATCHES "^lib(SDL3|SDL3_image|SDL3_ttf|SDL3_mixer)")
+                if(so_name MATCHES "^lib(SDL3|SDL_image|SDL_ttf|SDL_mixer)")
                     add_custom_command(TARGET ${target} POST_BUILD
                         COMMAND ${CMAKE_COMMAND} -E copy_if_different ${so_file} $<TARGET_FILE_DIR:${target}>)
                 endif()
