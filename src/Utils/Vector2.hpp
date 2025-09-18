@@ -1,5 +1,9 @@
 #pragma once
 
-class Vector2{
-	// Code here...
-};
+namespace Game
+{
+	class Vector2
+	{
+		// Code here...
+	};
+}

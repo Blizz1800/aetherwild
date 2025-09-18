@@ -1,6 +1,6 @@
 #include "Game.hpp"
 
-GameClass::GameClass()
+Game::GameClass::GameClass()
 {
     if (!SDL_Init(SDL_INIT_VIDEO))
     {
@@ -25,7 +25,7 @@ GameClass::GameClass()
     };
 }
 
-GameClass::~GameClass()
+Game::GameClass::~GameClass()
 {
     SDL_DestroyRenderer(this->m_renderer);
     this->m_renderer = nullptr;
@@ -33,13 +33,13 @@ GameClass::~GameClass()
     this->m_window = nullptr;
 }
 
-void GameClass::run()
+void Game::GameClass::run()
 {
     this->m_stateManager = new StateManager(this->m_renderer);
     this->m_running = true;
 
     // Set the frame rate
-    const int frameDelay = 1000 / FPS;
+    const int frameDelay = 1000 / Game::Constants::FPS;
 
     this->m_stateManager->startNewState(MAIN_MENU);
 
@@ -71,21 +71,22 @@ void GameClass::run()
         // Handle state events
         // this->m_stateManager->getState()->update();
         this->m_stateManager->getState()->render();
+
         // Update the surface
-        // SDL_UpdateWindowSurface(this->m_window);
+        SDL_RenderPresent(this->m_renderer);
 
         // Control de framerate
-        // Uint32 frameTime = SDL_GetTicks() - frameStart;
-        // if (frameDelay > frameTime)
-        // {
-        //     SDL_Delay(frameDelay - frameTime);
-        // }
+        Uint32 frameTime = SDL_GetTicks() - frameStart;
+        if (frameDelay > frameTime)
+        {
+            SDL_Delay(frameDelay - frameTime);
+        }
     }
 
     this->close();
 }
 
-void GameClass::close()
+void Game::GameClass::close()
 {
     SDL_DestroyRenderer(this->m_renderer);
     this->m_renderer = nullptr;

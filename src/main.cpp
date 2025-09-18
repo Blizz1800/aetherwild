@@ -1,6 +1,8 @@
 #include <iostream>
 #include "Game/Game.hpp"
 
+using namespace Game;
+
 int main()
 {
     try

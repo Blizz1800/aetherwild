@@ -1,6 +1,9 @@
 #pragma once
 
-class NPC
+namespace Game
 {
-	// Code here...
-};
+	class NPC
+	{
+		// Code here...
+	};
+}

@@ -1,12 +1,12 @@
 #include "StateManager.hpp"
 
-StateManager::StateManager(SDL_Renderer *m_renderer)
+Game::StateManager::StateManager(SDL_Renderer *m_renderer)
     : m_renderer(m_renderer)
 {
     this->targetState = nullptr;
 }
 
-StateManager::~StateManager()
+Game::StateManager::~StateManager()
 {
     if (this->targetState)
     {
@@ -15,9 +15,9 @@ StateManager::~StateManager()
     }
 }
 
-GameState *StateManager::createNewState(GameStates state, bool preload)
+Game::GameState *Game::StateManager::createNewState(GameStates state, bool preload)
 {
-    GameState *st = nullptr;
+    Game::GameState *st = nullptr;
     switch (state)
     {
     case GameStates::MAIN_MENU:
@@ -36,13 +36,13 @@ GameState *StateManager::createNewState(GameStates state, bool preload)
     return st;
 }
 
-void StateManager::enterState(GameState *state)
+void Game::StateManager::enterState(Game::GameState *state)
 {
     this->targetState = state;
     this->targetState->enter();
 }
 
-GameState *StateManager::startNewState(GameStates state)
+Game::GameState *Game::StateManager::startNewState(GameStates state)
 {
     if (this->targetState)
     {
@@ -50,14 +50,14 @@ GameState *StateManager::startNewState(GameStates state)
         this->lastStates.push_back(this->targetState);
         this->targetState = nullptr;
     }
-    GameState *newState = this->createNewState(state, true);
+    Game::GameState *newState = this->createNewState(state, true);
     if (!newState)
         return nullptr;
     this->enterState(newState);
     return this->targetState;
 }
 
-GameState *StateManager::getState(int index)
+Game::GameState *Game::StateManager::getState(int index)
 {
     if (index == -1)
         return this->targetState;

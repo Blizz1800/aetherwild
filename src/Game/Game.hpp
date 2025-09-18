@@ -11,28 +11,31 @@
 #include "StateManager.hpp"
 #include "Utils/Constants.hpp"
 
-class GameClass
+namespace Game
 {
-public:
-    GameClass();
-    ~GameClass();
+    class GameClass
+    {
+    public:
+        GameClass();
+        ~GameClass();
 
-    void run();
-    void init();
-    void cleanup();
-    void close();
+        void run();
+        void init();
+        void cleanup();
+        void close();
 
-    static const int FPS = 60;
+    private:
+        void handleEvents();
+        void update(float deltaTime);
+        void render();
 
-private:
-    void handleEvents();
-    void update(float deltaTime);
-    void render();
+        SDL_Window *m_window;
+        bool m_running;
 
-    SDL_Window *m_window;
-    bool m_running;
+        float deltaTime;
 
-    SDL_Renderer *m_renderer;
-    // std::unique_ptr<InputManager> m_inputManager;
-    StateManager *m_stateManager;
-};
+        SDL_Renderer *m_renderer;
+        // std::unique_ptr<InputManager> m_inputManager;
+        StateManager *m_stateManager;
+    };
+}

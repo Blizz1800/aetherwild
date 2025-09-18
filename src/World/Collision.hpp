@@ -1,6 +1,10 @@
 #pragma once
 
-class Collision
+namespace Game
 {
-	// Code here...
-};
+	class Collision
+	{
+		// Code here...
+	};
+}
+

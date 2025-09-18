@@ -1,6 +1,9 @@
 #pragma once
 
-
-class Timer{
-	// Code here...
-};
+namespace Game
+{
+	class Timer
+	{
+		// Code here...
+	};
+}

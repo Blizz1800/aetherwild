@@ -1,5 +1,9 @@
 #pragma once
 
-class InputManager{
-	// Code here...
-};
+namespace Game
+{
+	class InputManager
+	{
+		// Code here...
+	};
+}

@@ -1,6 +1,9 @@
 #pragma once
 
-class Sprite
+namespace Game
 {
-	// Code here...
-};
+	class Sprite
+	{
+		// Code here...
+	};
+}

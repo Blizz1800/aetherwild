@@ -1,25 +1,26 @@
 #include "MainMenuState.hpp"
 
-void MainMenuState::enter()
+void Game::MainMenuState::enter()
 {
 }
 
-void MainMenuState::exit()
+void Game::MainMenuState::exit()
 {
 }
 
-void MainMenuState::update(const float &dt)
+void Game::MainMenuState::update(const float &dt)
 {
 }
 
-bool MainMenuState::load()
+bool Game::MainMenuState::load()
 {
-    this->font = TTF_OpenFont("assets/fonts/m3x6.ttf", 24);
+    this->font = TTF_OpenFont("assets/fonts/m6x11plus.ttf", 24);
     if (!font)
     {
         SDL_Log("Couldn't open font: %s\n", SDL_GetError());
         return false;
     }
+    TTF_SetFontSize(this->font, 128);
     SDL_Surface *text = TTF_RenderText_Blended(this->font, "Main Menu", 0, SDL_Color{255, 255, 255, 255});
     if (!text)
     {
@@ -37,26 +38,19 @@ bool MainMenuState::load()
     return true;
 }
 
-void MainMenuState::render()
+void Game::MainMenuState::render()
 {
     int w = 0, h = 0;
     SDL_FRect dst;
-    const float scale = 4.0f;
 
     /* Center the text and scale it up */
     SDL_GetRenderOutputSize(this->m_renderer, &w, &h);
-    SDL_SetRenderScale(this->m_renderer, scale, scale);
     SDL_GetTextureSize(this->title, &dst.w, &dst.h);
-    // SDL_Log("After: %s", SDL_GetError());
-    dst.x = ((w / scale) - dst.w) / 2;
-    dst.y = ((h / scale) - dst.h) / 2;
 
-    // SDL_Render
     SDL_RenderTexture(this->m_renderer, this->title, NULL, &dst);
-    SDL_RenderPresent(this->m_renderer);
 }
 
-void MainMenuState::handleInput(const InputEvent &event)
+void Game::MainMenuState::handleInput(const InputEvent &event)
 {
     if (event.type == InputType::KEY_PRESSED)
     {
@@ -78,22 +72,22 @@ void MainMenuState::handleInput(const InputEvent &event)
     }
 }
 
-void MainMenuState::startNewGame()
+void Game::MainMenuState::startNewGame()
 {
     // Código para inicializar el menú principal
 }
 
-void MainMenuState::exitGame()
+void Game::MainMenuState::exitGame()
 {
     // Código para salir del juego
 }
 
-void MainMenuState::moveMenuUp()
+void Game::MainMenuState::moveMenuUp()
 {
     // Código para mover la selección del menú hacia arriba
 }
 
-void MainMenuState::moveMenuDown()
+void Game::MainMenuState::moveMenuDown()
 {
     // Código para mover la selección del menú hacia abajo
 }
