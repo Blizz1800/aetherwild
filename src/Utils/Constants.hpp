@@ -1,14 +1,12 @@
 #pragma once
 
-#include <string>
-
 namespace Game
 {
 	namespace Constants
 	{
-		extern const char *TITLE;
-		extern const int SCREEN_WIDTH;
-		extern const int SCREEN_HEIGHT;
-        extern const int FPS;
+		constexpr char TITLE[] = "Aetherwild";
+		constexpr int SCREEN_WIDTH = 800;
+		constexpr int SCREEN_HEIGHT = 600;
+		constexpr int FPS = 60;
 	}
 }
