@@ -1,3 +1,0 @@
-#include "Renderer.hpp"
-
-// Code here...

@@ -7,6 +7,13 @@ GameClass::GameClass()
         SDL_Log("SDL could not initialize! SDL error: %s\n", SDL_GetError());
         SDL_Quit();
     }
+
+    if (!TTF_Init())
+    {
+        SDL_Log("SDL_ttf could not initialize! SDL error: %s\n", SDL_GetError());
+        SDL_Quit();
+    }
+
     if (!SDL_CreateWindowAndRenderer(
             Game::Constants::TITLE,
             Game::Constants::SCREEN_WIDTH,
@@ -20,12 +27,21 @@ GameClass::GameClass()
 
 GameClass::~GameClass()
 {
+    SDL_DestroyRenderer(this->m_renderer);
+    this->m_renderer = nullptr;
+    SDL_DestroyWindow(this->m_window);
+    this->m_window = nullptr;
 }
 
 void GameClass::run()
 {
-    this->m_screenSurface = SDL_GetWindowSurface(this->m_window);
+    this->m_stateManager = new StateManager(this->m_renderer);
     this->m_running = true;
+
+    // Set the frame rate
+    const int frameDelay = 1000 / FPS;
+
+    this->m_stateManager->startNewState(MAIN_MENU);
 
     // The event data
     SDL_Event e;
@@ -33,6 +49,7 @@ void GameClass::run()
 
     while (this->m_running)
     {
+        Uint32 frameStart = SDL_GetTicks();
         while (SDL_PollEvent(&e))
         {
             // If event is quit type
@@ -40,16 +57,29 @@ void GameClass::run()
             {
                 // End the main loop
                 m_running = false;
+                break;
             }
-            // Fill the surface white
-            SDL_FillSurfaceRect(this->m_screenSurface, nullptr, SDL_MapSurfaceRGB(this->m_screenSurface, 0x0, 0x0, 0x0));
-
-            // Render image on screen
-            // SDL_BlitSurface(gHelloWorld, nullptr, this->m_screenSurface, nullptr);
-
-            // Update the surface
-            SDL_UpdateWindowSurface(this->m_window);
+            // Create an input event from SDL event
+            InputEvent event = InputEvent(InputType::KEY_PRESSED, e.key.key);
+            this->m_stateManager->getState()->handleInput(event);
         }
+        // Fill the surface white
+        // SDL_FillSurfaceRect(this->m_screenSurface, nullptr, SDL_MapSurfaceRGB(this->m_screenSurface, 0x0, 0x0, 0x0));
+        SDL_SetRenderDrawColor(this->m_renderer, 0, 0, 0, 255);
+        SDL_RenderClear(this->m_renderer);
+
+        // Handle state events
+        // this->m_stateManager->getState()->update();
+        this->m_stateManager->getState()->render();
+        // Update the surface
+        // SDL_UpdateWindowSurface(this->m_window);
+
+        // Control de framerate
+        // Uint32 frameTime = SDL_GetTicks() - frameStart;
+        // if (frameDelay > frameTime)
+        // {
+        //     SDL_Delay(frameDelay - frameTime);
+        // }
     }
 
     this->close();
@@ -57,9 +87,8 @@ void GameClass::run()
 
 void GameClass::close()
 {
-    // Clean up surface
-    SDL_DestroySurface(this->m_screenSurface);
-    this->m_screenSurface = nullptr;
+    SDL_DestroyRenderer(this->m_renderer);
+    this->m_renderer = nullptr;
 
     // Destroy window
     SDL_DestroyWindow(this->m_window);
