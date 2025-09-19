@@ -44,13 +44,12 @@ Game::GameClass::~GameClass()
 
 void Game::GameClass::run()
 {
-    m_stateManager = new StateManager(m_renderer);
     m_running = true;
 
     // Set the frame rate
     const int frameDelay = 1000 / Game::Constants::FPS;
 
-    m_stateManager->startNewState(MAIN_MENU);
+    sStateMgr->startNewState(MAIN_MENU, m_renderer);
 
     // The event data
     SDL_Event e;
@@ -70,7 +69,7 @@ void Game::GameClass::run()
             }
             // Create an input event from SDL event
             InputEvent event = InputEvent(InputType::KEY_PRESSED, e.key.key);
-            m_stateManager->getState()->handleInput(event);
+            sStateMgr->getState()->handleInput(event);
         }
         // Fill the surface white
         // SDL_FillSurfaceRect(m_screenSurface, nullptr, SDL_MapSurfaceRGB(m_screenSurface, 0x0, 0x0, 0x0));
@@ -79,7 +78,7 @@ void Game::GameClass::run()
 
         // Handle state events
         // m_stateManager->getState()->update();
-        m_stateManager->getState()->render();
+        sStateMgr->getState()->render();
 
         // Update the surface
         SDL_RenderPresent(m_renderer);

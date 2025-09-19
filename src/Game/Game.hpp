@@ -30,6 +30,5 @@ namespace Game
 
         SDL_Renderer *m_renderer;
         // std::unique_ptr<InputManager> m_inputManager;
-        StateManager *m_stateManager;
     };
 }

@@ -57,38 +57,39 @@ void Game::MainMenuState::handleInput(const InputEvent &event)
     {
         switch (event.key)
         {
-        case SDLK_RETURN: // Enter
-            startNewGame();
-            break;
-        case SDLK_ESCAPE: // ESC
-            exitGame();
-            break;
-        case SDLK_UP:
-            moveMenuUp();
-            break;
-        case SDLK_DOWN:
-            moveMenuDown();
-            break;
+            case SDLK_RETURN: // Enter
+                startNewGame();
+                break;
+            case SDLK_ESCAPE: // ESC
+                exitGame();
+                break;
+            case SDLK_UP:
+                moveMenuUp();
+                break;
+            case SDLK_DOWN:
+                moveMenuDown();
+                break;
+            default: break;
         }
     }
 }
 
 void Game::MainMenuState::startNewGame()
 {
-    std::printf("Pressed: Enter");
+    std::printf("Pressed: Enter\n");
 }
 
 void Game::MainMenuState::exitGame()
 {
-    std::printf("Pressed: ESC");
+    std::printf("Pressed: ESC\n");
 }
 
 void Game::MainMenuState::moveMenuUp()
 {
-    std::printf("Pressed: UP");
+    std::printf("Pressed: UP\n");
 }
 
 void Game::MainMenuState::moveMenuDown()
 {
-    std::printf("Pressed: DOWN");
+    std::printf("Pressed: DOWN\n");
 }
