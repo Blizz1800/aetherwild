@@ -9,7 +9,7 @@
 
 #include "Utils/Constants.hpp"
 
-Game::GameClass::GameClass()
+Game::GameClass::GameClass() : m_running(false)
 {
     if (!SDL_Init(SDL_INIT_VIDEO))
     {

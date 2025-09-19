@@ -1,16 +1,16 @@
 #pragma once
 
-#include <SDL3/SDL.h>
+#include <memory>
+#include "Game/GameState.hpp"
 #include <SDL3_ttf/SDL_ttf.h>
 
-#include "Game/GameState.hpp"
 namespace Game
 {
 	class MainMenuState : public Game::GameState
 	{
 	private:
-		TTF_Font* m_font = nullptr;
-		SDL_Texture* m_title = nullptr;
+        std::unique_ptr<TTF_Font, decltype(&TTF_CloseFont)> m_font;
+        std::unique_ptr<SDL_Texture, decltype(&SDL_DestroyTexture)> m_title;
 
 		void startNewGame();
 		void exitGame();
@@ -18,8 +18,7 @@ namespace Game
 		void moveMenuDown();
 
 	public:
-		MainMenuState(SDL_Renderer *renderer)
-			: GameState(renderer) {}
+		MainMenuState(SDL_Renderer *renderer);
 		void enter() override;
 		void exit() override;
 		void update(const float &dt) override;
