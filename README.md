@@ -117,8 +117,7 @@ cd aetherwild
 # Instalar MSYS2 desde https://www.msys2.org/
 # En terminal MSYS2:
 pacman -S mingw-w64-x86_64-toolchain mingw-w64-x86_64-cmake
-pacman -S mingw-w64-x86_64-sdl3 mingw-w64-x86_64-sdl3_image
-pacman -S mingw-w64-x86_64-sdl3_ttf mingw-w64-x86_64-sdl3_mixer
+pacman -S mingw-w64-x86_64-sdl3 mingw-w64-x86_64-sdl3-image mingw-w64-x86_64-sdl3-ttf mingw-w64-x86_64-SDL_mixer 
 
 # Clonar el repositorio
 git clone https://github.com/tu-usuario/aetherwild.git
