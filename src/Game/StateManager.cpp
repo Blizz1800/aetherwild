@@ -32,6 +32,9 @@ Game::GameState* Game::StateManager::CreateNewState(GameStates state, SDL_Render
         case GameStates::MAIN_MENU:
             st = new MainMenuState(renderer);
             break;
+        case GameStates::OPTIONS_MENU:
+            st = new OptionsMenuState(renderer);
+            break;
         default:
             SDL_SetError("State not recognized!");
             break;
