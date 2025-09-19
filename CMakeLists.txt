@@ -59,6 +59,7 @@ target_include_directories(${PROJECT_NAME} PRIVATE
     ${SDL_MIXER_INCLUDE_DIRS}
 )
 
+# TODO: Cambiar -O2 a un parametro de CMAKE, si es "Release" deberia ser -O3
 target_compile_options(${PROJECT_NAME} PRIVATE 
     ${SDL3_CFLAGS_OTHER}
     -Wall -Wextra -O2
@@ -68,10 +69,10 @@ function(copy_dynamic_libraries target)
     if(WIN32)
         # Windows - buscar y copiar DLLs de SDL3
         find_file(SDL_DLL NAMES SDL3.dll PATHS ${SDL3_LIBRARY_DIRS} PATH_SUFFIXES bin)
-        find_file(SDL_IMAGE_DLL NAMES SDL_image.dll PATHS ${SDL_IMAGE_LIBRARY_DIRS} PATH_SUFFIXES bin)
-        find_file(SDL_TTF_DLL NAMES SDL_ttf.dll PATHS ${SDL_TTF_LIBRARY_DIRS} PATH_SUFFIXES bin)
+        find_file(SDL_IMAGE_DLL NAMES SDL3_image.dll PATHS ${SDL_IMAGE_LIBRARY_DIRS} PATH_SUFFIXES bin)
+        find_file(SDL_TTF_DLL NAMES SDL3_ttf.dll PATHS ${SDL_TTF_LIBRARY_DIRS} PATH_SUFFIXES bin)
         find_file(SDL_MIXER_DLL NAMES SDL_mixer.dll PATHS ${SDL_MIXER_LIBRARY_DIRS} PATH_SUFFIXES bin)
-        
+
         if(SDL_DLL)
             add_custom_command(TARGET ${target} POST_BUILD
                 COMMAND ${CMAKE_COMMAND} -E copy_if_different ${SDL_DLL} $<TARGET_FILE_DIR:${target}>)
