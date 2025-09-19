@@ -1,3 +1,4 @@
+#include <ostream>
 #include "MainMenuState.hpp"
 
 void Game::MainMenuState::enter()
@@ -14,21 +15,21 @@ void Game::MainMenuState::update(const float &dt)
 
 bool Game::MainMenuState::load()
 {
-    this->font = TTF_OpenFont("assets/fonts/m6x11plus.ttf", 24);
-    if (!font)
+    m_font = TTF_OpenFont("assets/fonts/m6x11plus.ttf", 24);
+    if (!m_font)
     {
         SDL_Log("Couldn't open font: %s\n", SDL_GetError());
         return false;
     }
-    TTF_SetFontSize(this->font, 128);
-    SDL_Surface *text = TTF_RenderText_Blended(this->font, "Main Menu", 0, SDL_Color{255, 255, 255, 255});
+    TTF_SetFontSize(m_font, 128);
+    SDL_Surface *text = TTF_RenderText_Blended(m_font, "Main Menu", 0, SDL_Color{255, 255, 255, 255});
     if (!text)
     {
         SDL_Log("Couldn't render text: %s\n", SDL_GetError());
         return false;
     }
-    this->title = SDL_CreateTextureFromSurface(this->m_renderer, text);
-    if (!this->title)
+    m_title = SDL_CreateTextureFromSurface(m_renderer, text);
+    if (!m_title)
     {
         SDL_Log("Couldn't create texture from surface: %s\n", SDL_GetError());
         SDL_DestroySurface(text);
@@ -44,10 +45,10 @@ void Game::MainMenuState::render()
     SDL_FRect dst;
 
     /* Center the text and scale it up */
-    SDL_GetRenderOutputSize(this->m_renderer, &w, &h);
-    SDL_GetTextureSize(this->title, &dst.w, &dst.h);
+    SDL_GetRenderOutputSize(m_renderer, &w, &h);
+    SDL_GetTextureSize(m_title, &dst.w, &dst.h);
 
-    SDL_RenderTexture(this->m_renderer, this->title, NULL, &dst);
+    SDL_RenderTexture(m_renderer, m_title, NULL, &dst);
 }
 
 void Game::MainMenuState::handleInput(const InputEvent &event)
@@ -74,20 +75,20 @@ void Game::MainMenuState::handleInput(const InputEvent &event)
 
 void Game::MainMenuState::startNewGame()
 {
-    // Código para inicializar el menú principal
+    std::printf("Pressed: Enter");
 }
 
 void Game::MainMenuState::exitGame()
 {
-    // Código para salir del juego
+    std::printf("Pressed: ESC");
 }
 
 void Game::MainMenuState::moveMenuUp()
 {
-    // Código para mover la selección del menú hacia arriba
+    std::printf("Pressed: UP");
 }
 
 void Game::MainMenuState::moveMenuDown()
 {
-    // Código para mover la selección del menú hacia abajo
+    std::printf("Pressed: DOWN");
 }

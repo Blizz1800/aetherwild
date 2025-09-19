@@ -3,15 +3,15 @@
 Game::StateManager::StateManager(SDL_Renderer *m_renderer)
     : m_renderer(m_renderer)
 {
-    this->targetState = nullptr;
+    targetState = nullptr;
 }
 
 Game::StateManager::~StateManager()
 {
-    if (this->targetState)
+    if (targetState)
     {
-        delete this->targetState;
-        this->targetState = nullptr;
+        delete targetState;
+        targetState = nullptr;
     }
 }
 
@@ -38,30 +38,30 @@ Game::GameState *Game::StateManager::createNewState(GameStates state, bool prelo
 
 void Game::StateManager::enterState(Game::GameState *state)
 {
-    this->targetState = state;
-    this->targetState->enter();
+    targetState = state;
+    targetState->enter();
 }
 
 Game::GameState *Game::StateManager::startNewState(GameStates state)
 {
-    if (this->targetState)
+    if (targetState)
     {
-        this->targetState->exit();
-        this->lastStates.push_back(this->targetState);
-        this->targetState = nullptr;
+        targetState->exit();
+        lastStates.push_back(targetState);
+        targetState = nullptr;
     }
-    Game::GameState *newState = this->createNewState(state, true);
+    Game::GameState *newState = createNewState(state, true);
     if (!newState)
         return nullptr;
-    this->enterState(newState);
-    return this->targetState;
+    enterState(newState);
+    return targetState;
 }
 
 Game::GameState *Game::StateManager::getState(int index)
 {
     if (index == -1)
-        return this->targetState;
-    else if (index >= 0 && index < (int)this->lastStates.size())
-        return this->lastStates[index];
+        return targetState;
+    else if (index >= 0 && index < (int)lastStates.size())
+        return lastStates[index];
     return nullptr;
 }

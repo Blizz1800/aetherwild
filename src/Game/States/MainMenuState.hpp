@@ -9,8 +9,8 @@ namespace Game
 	class MainMenuState : public Game::GameState
 	{
 	private:
-		TTF_Font *font = nullptr;
-		SDL_Texture *title = nullptr;
+		TTF_Font* m_font = nullptr;
+		SDL_Texture* m_title = nullptr;
 
 		void startNewGame();
 		void exitGame();
