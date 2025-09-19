@@ -1,14 +1,14 @@
 #pragma once
 
-#include "GameState.hpp"
-#include "States/MainMenuState.hpp"
 #include <vector>
+#include "GameState.hpp"
 
 namespace Game
 {
     enum GameStates : uint8_t
     {
-        MAIN_MENU,
+        MAIN_MENU       = 1,
+        OPTIONS_MENU,
     };
 
     class StateManager
@@ -22,6 +22,7 @@ namespace Game
 
         void CleanOldState();
         GameState* CreateNewState(GameStates state, SDL_Renderer* renderer, bool preload = false);
+        void EnterInState(GameState *state);
 
     public:
         StateManager(const StateManager&) = delete;
@@ -35,7 +36,6 @@ namespace Game
             return &instance;
         }
 
-        void EnterInState(GameState *state);
         GameState* startNewState(GameStates state, SDL_Renderer* renderer);
         GameState* getState(int index = -1);
         GameState* getLastState();

@@ -1,5 +1,6 @@
 build/
 *.py
+.vscode/
 
 CMakeLists.txt.user
 CMakeCache.txt

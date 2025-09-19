@@ -23,12 +23,10 @@ namespace Game
         void update(float deltaTime);
         void render();
 
-        SDL_Window *m_window;
-        bool m_running;
+        SDL_Window* m_window;
+        bool m_running{};
 
-        float deltaTime;
-
-        SDL_Renderer *m_renderer;
+        SDL_Renderer* m_renderer;
         // std::unique_ptr<InputManager> m_inputManager;
     };
 }

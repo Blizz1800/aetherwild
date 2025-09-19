@@ -1,4 +1,6 @@
 #include "StateManager.hpp"
+#include "States/MainMenu/MainMenuState.hpp"
+#include "States/OptionsMenu/OptionsMenuState.hpp"
 
 Game::StateManager::StateManager()
 {
@@ -30,6 +32,9 @@ Game::GameState* Game::StateManager::CreateNewState(GameStates state, SDL_Render
         case GameStates::MAIN_MENU:
             st = new MainMenuState(renderer);
             break;
+        case GameStates::OPTIONS_MENU:
+            st = new OptionsMenuState(renderer);
+            break;
         default:
             SDL_SetError("State not recognized!");
             break;
@@ -39,7 +44,11 @@ Game::GameState* Game::StateManager::CreateNewState(GameStates state, SDL_Render
     {
         // TODO: Load the state assets in background
         if (!st->load())
+        {
+            delete st;
+            st = nullptr;
             SDL_SetError("Failed to load state assets!");
+        }
     }
     return st;
 }
