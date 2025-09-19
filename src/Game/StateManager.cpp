@@ -1,32 +1,40 @@
 #include "StateManager.hpp"
 
-Game::StateManager::StateManager(SDL_Renderer *m_renderer)
-    : m_renderer(m_renderer)
+Game::StateManager::StateManager()
 {
-    this->targetState = nullptr;
+    targetState = nullptr;
 }
 
 Game::StateManager::~StateManager()
 {
-    if (this->targetState)
+    if (targetState)
     {
-        delete this->targetState;
-        this->targetState = nullptr;
+        delete targetState;
+        targetState = nullptr;
+    }
+
+    for (auto it : lastStates)
+    {
+        if (!it) continue;
+
+        delete it;
+        it = nullptr;
     }
 }
 
-Game::GameState *Game::StateManager::createNewState(GameStates state, bool preload)
+Game::GameState* Game::StateManager::CreateNewState(GameStates state, SDL_Renderer* renderer, bool preload)
 {
-    Game::GameState *st = nullptr;
+    Game::GameState* st = nullptr;
     switch (state)
     {
-    case GameStates::MAIN_MENU:
-        st = new MainMenuState(m_renderer);
-        break;
-    default:
-        SDL_SetError("State not recognized!");
-        break;
+        case GameStates::MAIN_MENU:
+            st = new MainMenuState(renderer);
+            break;
+        default:
+            SDL_SetError("State not recognized!");
+            break;
     }
+    
     if (st && preload)
     {
         // TODO: Load the state assets in background
@@ -36,32 +44,38 @@ Game::GameState *Game::StateManager::createNewState(GameStates state, bool prelo
     return st;
 }
 
-void Game::StateManager::enterState(Game::GameState *state)
+void Game::StateManager::EnterInState(Game::GameState *state)
 {
-    this->targetState = state;
-    this->targetState->enter();
+    targetState = state;
+    targetState->enter();
 }
 
-Game::GameState *Game::StateManager::startNewState(GameStates state)
+Game::GameState* Game::StateManager::startNewState(GameStates state, SDL_Renderer* renderer)
 {
-    if (this->targetState)
+    CleanOldState();
+    if (Game::GameState* newState = CreateNewState(state, renderer, true)) 
     {
-        this->targetState->exit();
-        this->lastStates.push_back(this->targetState);
-        this->targetState = nullptr;
+        EnterInState(newState);
+        return targetState;
     }
-    Game::GameState *newState = this->createNewState(state, true);
-    if (!newState)
-        return nullptr;
-    this->enterState(newState);
-    return this->targetState;
+    return nullptr;
 }
 
 Game::GameState *Game::StateManager::getState(int index)
 {
     if (index == -1)
-        return this->targetState;
-    else if (index >= 0 && index < (int)this->lastStates.size())
-        return this->lastStates[index];
+        return targetState;
+    else if (index >= 0 && index < static_cast<int>(lastStates.size()))
+        return lastStates[index];
     return nullptr;
+}
+
+void Game::StateManager::CleanOldState()
+{
+    if (targetState)
+    {
+        targetState->exit();
+        lastStates.push_back(targetState);
+        targetState = nullptr;
+    }
 }

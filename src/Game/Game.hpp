@@ -1,15 +1,9 @@
 #pragma once
 
-#include <SDL3/SDL.h>
-#include <SDL3/SDL_main.h>
-#include <SDL3/SDL_video.h>
-#include <SDL3_ttf/SDL_ttf.h>
-
-#include <string>
-#include <memory>
-
 #include "StateManager.hpp"
-#include "Utils/Constants.hpp"
+
+struct SDL_Window;
+struct SDL_Renderer;
 
 namespace Game
 {
@@ -36,6 +30,5 @@ namespace Game
 
         SDL_Renderer *m_renderer;
         // std::unique_ptr<InputManager> m_inputManager;
-        StateManager *m_stateManager;
     };
 }

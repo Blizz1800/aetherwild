@@ -6,7 +6,7 @@
 
 namespace Game
 {
-    enum GameStates
+    enum GameStates : uint8_t
     {
         MAIN_MENU,
     };
@@ -14,18 +14,33 @@ namespace Game
     class StateManager
     {
     private:
-        GameState *targetState;
-        SDL_Renderer *m_renderer;
+        StateManager();
+        ~StateManager();
+
+        GameState* targetState;
         std::vector<GameState *> lastStates;
 
+        void CleanOldState();
+        GameState* CreateNewState(GameStates state, SDL_Renderer* renderer, bool preload = false);
+
     public:
-        StateManager(SDL_Renderer *m_renderer);
-        ~StateManager();
-        GameState *createNewState(GameStates state, bool preload = false);
-        void enterState(GameState *state);
-        GameState *startNewState(GameStates state);
-        GameState *getState(int index = -1);
-        GameState *getLastState();
-        GameState *getFirstState();
+        StateManager(const StateManager&) = delete;
+        StateManager& operator=(const StateManager&) = delete;
+        StateManager(StateManager&&) = delete;
+        StateManager& operator=(StateManager&&) = delete;
+
+        static StateManager* getInstance()
+        {
+            static StateManager instance;
+            return &instance;
+        }
+
+        void EnterInState(GameState *state);
+        GameState* startNewState(GameStates state, SDL_Renderer* renderer);
+        GameState* getState(int index = -1);
+        GameState* getLastState();
+        GameState* getFirstState();
     };
 }
+
+#define sStateMgr StateManager::getInstance()

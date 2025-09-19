@@ -1,9 +1,10 @@
 #include <iostream>
+#include <SDL3/SDL_main.h>
 #include "Game/Game.hpp"
 
 using namespace Game;
 
-int main()
+int main(int argc, char* argv[])
 {
     try
     {
