@@ -59,7 +59,7 @@ target_include_directories(${PROJECT_NAME} PRIVATE
     ${SDL_MIXER_INCLUDE_DIRS}
 )
 
-# TODO: Cambiar -O2 a un parametro de CMAKE, si es "Release" deberia ser -O3
+# TODO: Si CMAKE_BUILD_TYPE es "Release" deberia ser -O3
 target_compile_options(${PROJECT_NAME} PRIVATE 
     ${SDL3_CFLAGS_OTHER}
     -Wall -Wextra -O2
@@ -144,6 +144,11 @@ if(WIN32)
     set_target_properties(${PROJECT_NAME} PROPERTIES
         VS_DEBUGGER_WORKING_DIRECTORY $<TARGET_FILE_DIR:${PROJECT_NAME}>
     )
+
+    if(CMAKE_BUILD_TYPE STREQUAL "Release")
+        set_target_properties(${PROJECT_NAME} PROPERTIES 
+        WIN32_EXECUTABLE TRUE)
+    endif()
 elseif(APPLE)
     # Configuración específica para macOS
     target_compile_definitions(${PROJECT_NAME} PRIVATE MACOS)
