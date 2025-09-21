@@ -8,6 +8,7 @@ namespace Game
     class IInputObserver
     {
     public:
+        virtual ~IInputObserver() = default;
         virtual void handleInput(const InputEvent &event) = 0;
     };
 
@@ -17,7 +18,7 @@ namespace Game
         InputManager(){};
         ~InputManager();
         InputEvent *event;
-        InputType *type;
+        InputType type;
         std::list<IInputObserver *> subscriptions;
 
         void notify();

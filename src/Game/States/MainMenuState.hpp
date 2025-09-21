@@ -20,6 +20,7 @@ namespace Game
 	public:
 		MainMenuState(SDL_Renderer *renderer)
 			: GameState(renderer) {}
+		virtual ~MainMenuState() override;
 		void enter() override;
 		void exit() override;
 		void update(const float &dt) override;

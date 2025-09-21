@@ -1,6 +1,10 @@
 #include <ostream>
 #include "MainMenuState.hpp"
 
+Game::MainMenuState::~MainMenuState()
+{
+}
+
 void Game::MainMenuState::enter()
 {
 }

@@ -2,11 +2,6 @@
 
 Game::InputManager::~InputManager()
 {
-    if (type)
-    {
-        delete type;
-        type = nullptr;
-    }
     if (event)
     {
         delete event;
@@ -41,35 +36,35 @@ void Game::InputManager::notify()
 
 Game::InputEvent *Game::InputManager::handleInput(SDL_Event *event)
 {
-    *type = InputType::OTHER;
+    type = InputType::OTHER;
     switch (event->type)
     {
     case SDL_EventType::SDL_EVENT_KEY_DOWN:
-        *type = InputType::KEY_PRESSED;
+        type = InputType::KEY_PRESSED;
         break;
     case SDL_EventType::SDL_EVENT_KEY_UP:
-        *type = InputType::KEY_RELEASED;
+        type = InputType::KEY_RELEASED;
         break;
     case SDL_EventType::SDL_EVENT_JOYSTICK_BUTTON_DOWN:
-        *type = InputType::CONTROLLER_BUTTON_PRESSED;
+        type = InputType::CONTROLLER_BUTTON_PRESSED;
         break;
     case SDL_EventType::SDL_EVENT_JOYSTICK_BUTTON_UP:
-        *type = InputType::CONTROLLER_BUTTON_RELEASED;
+        type = InputType::CONTROLLER_BUTTON_RELEASED;
         break;
     case SDL_EventType::SDL_EVENT_JOYSTICK_AXIS_MOTION:
-        *type = InputType::CONTROLLER_AXIS;
+        type = InputType::CONTROLLER_AXIS;
         break;
     case SDL_EventType::SDL_EVENT_MOUSE_MOTION:
-        *type = InputType::MOUSE_MOVED;
+        type = InputType::MOUSE_MOVED;
         break;
     case SDL_EventType::SDL_EVENT_MOUSE_BUTTON_DOWN:
-        *type = InputType::CONTROLLER_BUTTON_PRESSED;
+        type = InputType::CONTROLLER_BUTTON_PRESSED;
         break;
     case SDL_EventType::SDL_EVENT_MOUSE_BUTTON_UP:
-        *type = InputType::CONTROLLER_BUTTON_RELEASED;
+        type = InputType::CONTROLLER_BUTTON_RELEASED;
         break;
     }
-    this->event = new InputEvent(*type, event->key.key);
+    this->event = new InputEvent(type, event->key.key);
     notify();
     return this->event;
 }

@@ -5,7 +5,11 @@ mkdir -p build
 cd build
 
 # Configurar con CMake
-cmake .. -DCMAKE_BUILD_TYPE=Release
+if [[ "$1" == "debug" ]]; then
+    cmake .. -DCMAKE_BUILD_TYPE=Debug
+else
+    cmake .. -DCMAKE_BUILD_TYPE=Release
+fi
 
 # Compilar
 make clean -j$(nproc)

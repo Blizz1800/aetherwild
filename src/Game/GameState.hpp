@@ -1,6 +1,7 @@
 #pragma once
 
 #include <SDL3/SDL.h>
+#include "Input/InputEvent.hpp"
 #include "Input/InputManager.hpp"
 
 namespace Game
