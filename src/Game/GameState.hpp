@@ -1,11 +1,11 @@
 #pragma once
 
 #include <SDL3/SDL.h>
-#include "Input/InputEvent.hpp"
+#include "Input/InputManager.hpp"
 
 namespace Game
 {
-	class GameState
+	class GameState : public IInputObserver 
 	{
 
 	protected:

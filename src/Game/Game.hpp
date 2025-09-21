@@ -1,9 +1,16 @@
 #pragma once
 
-#include "StateManager.hpp"
+#include <string>
+#include <memory>
 
-struct SDL_Window;
-struct SDL_Renderer;
+#include <SDL3/SDL.h>
+#include <SDL3/SDL_video.h>
+#include <SDL3_ttf/SDL_ttf.h>
+
+#include "Utils/Constants.hpp"
+
+#include "Input/InputManager.hpp"
+#include "StateManager.hpp"
 
 namespace Game
 {
@@ -29,6 +36,6 @@ namespace Game
         float deltaTime;
 
         SDL_Renderer *m_renderer;
-        // std::unique_ptr<InputManager> m_inputManager;
+        InputManager *m_inputManager;
     };
 }

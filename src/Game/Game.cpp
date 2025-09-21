@@ -1,14 +1,5 @@
 #include "Game.hpp"
 
-#include <string>
-#include <memory>
-
-#include <SDL3/SDL.h>
-#include <SDL3/SDL_video.h>
-#include <SDL3_ttf/SDL_ttf.h>
-
-#include "Utils/Constants.hpp"
-
 Game::GameClass::GameClass()
 {
     if (!SDL_Init(SDL_INIT_VIDEO))
@@ -55,9 +46,11 @@ void Game::GameClass::run()
     SDL_Event e;
     SDL_zero(e);
 
+    Uint32 frameStart = SDL_GetTicks();
+
     while (m_running)
     {
-        Uint32 frameStart = SDL_GetTicks();
+        // Uint32 frameNew = SDL_GetTicks();
         while (SDL_PollEvent(&e))
         {
             // If event is quit type
@@ -67,9 +60,9 @@ void Game::GameClass::run()
                 m_running = false;
                 break;
             }
+
             // Create an input event from SDL event
-            InputEvent event = InputEvent(InputType::KEY_PRESSED, e.key.key);
-            sStateMgr->getState()->handleInput(event);
+            sInputMgr->handleInput(&e);
         }
         // Fill the surface white
         // SDL_FillSurfaceRect(m_screenSurface, nullptr, SDL_MapSurfaceRGB(m_screenSurface, 0x0, 0x0, 0x0));
@@ -77,7 +70,9 @@ void Game::GameClass::run()
         SDL_RenderClear(m_renderer);
 
         // Handle state events
-        // m_stateManager->getState()->update();
+        // const float dt = frameNew - frameStart / frameDelay;
+        // std::cout << dt << std::endl;
+        // sStateMgr->getState()->update();
         sStateMgr->getState()->render();
 
         // Update the surface
