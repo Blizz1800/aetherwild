@@ -2,5 +2,7 @@
     "files.associations": {
         "memory": "cpp",
         "iostream": "cpp"
-    }
+    },
+    "makefile.makefilePath": "build/",
+    "makefile.buildLog": "build/"
 }

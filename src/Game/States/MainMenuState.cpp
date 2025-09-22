@@ -3,14 +3,28 @@
 
 Game::MainMenuState::~MainMenuState()
 {
+    if (m_title)
+    {
+        SDL_DestroyTexture(m_title);
+        m_title = nullptr;
+    }
+    if (m_font)
+    {
+        TTF_CloseFont(m_font);
+        m_font = nullptr;
+    }
 }
 
 void Game::MainMenuState::enter()
 {
+    sInputMgr->subscribe(this);
+    if(!m_isLoaded)
+        load();
 }
 
 void Game::MainMenuState::exit()
 {
+    sInputMgr->unsubscribe(this);
 }
 
 void Game::MainMenuState::update(const float &dt)
@@ -23,24 +37,25 @@ bool Game::MainMenuState::load()
     if (!m_font)
     {
         SDL_Log("Couldn't open font: %s\n", SDL_GetError());
-        return false;
+        return m_isLoaded;
     }
     TTF_SetFontSize(m_font, 128);
     SDL_Surface *text = TTF_RenderText_Blended(m_font, "Main Menu", 0, SDL_Color{255, 255, 255, 255});
     if (!text)
     {
         SDL_Log("Couldn't render text: %s\n", SDL_GetError());
-        return false;
+        return m_isLoaded;
     }
     m_title = SDL_CreateTextureFromSurface(m_renderer, text);
     if (!m_title)
     {
         SDL_Log("Couldn't create texture from surface: %s\n", SDL_GetError());
         SDL_DestroySurface(text);
-        return false;
+        return m_isLoaded;
     }
     SDL_DestroySurface(text);
-    return true;
+    m_isLoaded = true;
+    return m_isLoaded;
 }
 
 void Game::MainMenuState::render()

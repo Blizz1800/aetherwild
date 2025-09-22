@@ -2,7 +2,7 @@
 
 Game::GameClass::GameClass()
 {
-    if (!SDL_Init(SDL_INIT_VIDEO))
+    if (!SDL_Init(SDL_INIT_VIDEO | SDL_INIT_JOYSTICK | SDL_INIT_GAMEPAD))
     {
         SDL_Log("SDL could not initialize! SDL error: %s\n", SDL_GetError());
         SDL_Quit();
@@ -60,6 +60,7 @@ void Game::GameClass::run()
                 m_running = false;
                 break;
             }
+            
 
             // Create an input event from SDL event
             sInputMgr->handleInput(&e);

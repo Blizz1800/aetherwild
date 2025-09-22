@@ -11,6 +11,7 @@ namespace Game
 
 	protected:
 		SDL_Renderer *m_renderer;
+		bool m_isLoaded = false;
 
 	public:
 		GameState(SDL_Renderer *m_renderer)
@@ -21,6 +22,5 @@ namespace Game
 		virtual void update(const float &dt) = 0; // Lógica del estado
 		virtual void render() = 0;				  // Renderizado del estado
 		virtual bool load() = 0;				  // Cargar assets
-		virtual void handleInput(const InputEvent &event) = 0;
 	};
 }

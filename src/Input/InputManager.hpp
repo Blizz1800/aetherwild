@@ -17,11 +17,14 @@ namespace Game
     private:
         InputManager(){};
         ~InputManager();
-        InputEvent *event;
+        InputEvent *event = nullptr;
         InputType type;
         std::list<IInputObserver *> subscriptions;
 
+        Vector2 getMousePos(SDL_Event *event, Vector2* relPos = nullptr);
         void notify();
+        bool isInputEvent(Uint32 type_);
+        bool isAddedEvent(Uint32 type_);
 
     public:
         InputManager(const InputManager &) = delete;
@@ -38,7 +41,8 @@ namespace Game
         void subscribe(IInputObserver *state);
         void unsubscribe(IInputObserver *state);
 
-        InputEvent *handleInput(SDL_Event *event);
+        void handleInput(SDL_Event *event);
+        void handleDevice(SDL_Event *event);
     };
 }
 
