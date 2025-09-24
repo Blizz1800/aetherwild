@@ -61,6 +61,8 @@ void Game::GameClass::run()
                 break;
             }
             
+            // If event is an input event
+            sInputMgr->handleDevice(&e);
 
             // Create an input event from SDL event
             sInputMgr->handleInput(&e);

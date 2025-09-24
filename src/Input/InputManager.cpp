@@ -36,9 +36,31 @@ void Game::InputManager::notify()
 {
     for (auto it : subscriptions)
     {
-        SDL_Log("Event: [%f, %f] (%f, %f)", event->mouse_pos.x, event->mouse_pos.y, event->mouse_rel.y, event->mouse_rel.y);
         if (event->type == InputType::MOUSE_MOVED)
+        {
+            SDL_Log("Event: [%f, %f] (%f, %f)", event->mouse_pos.x, event->mouse_pos.y, event->mouse_rel.y, event->mouse_rel.y);
             continue;
+        }
+        if (event->type == InputType::KEY_PRESSED || event->type == InputType::KEY_RELEASED)
+        {
+            SDL_Log("Event: %s %s", event->type == InputType::KEY_PRESSED ? "Key Pressed:" : "Key Released:", SDL_GetKeyName(event->key));
+            continue;
+        }
+        if (event->type == InputType::MOUSE_PRESSED || event->type == InputType::MOUSE_RELEASED)
+        {
+            SDL_Log("Event: %s Button: %d at (%f, %f)", event->type == InputType::MOUSE_PRESSED ? "Mouse Pressed:" : "Mouse Released:", event->mouseButton, event->mouse_pos.x, event->mouse_pos.y);
+            continue;
+        }
+        if (event->type == InputType::CONTROLLER_BUTTON_PRESSED || event->type == InputType::CONTROLLER_BUTTON_RELEASED)
+        {
+            SDL_Log("Event: %s Button: %d", event->type == InputType::CONTROLLER_BUTTON_PRESSED ? "Controller Button Pressed:" : "Controller Button Released:", static_cast<int>(event->controllerButton));
+            continue;
+        }
+        if (event->type == InputType::CONTROLLER_AXIS)
+        {
+            SDL_Log("Event: Controller Axis: %d", static_cast<int>(event->axisValue));
+            continue;
+        }
         it->handleInput(*this->event);
     }
 }
@@ -49,8 +71,15 @@ bool Game::InputManager::isInputEvent(Uint32 type_)
     SDL_EventType type = static_cast<SDL_EventType>(type_);
     return type == SDL_EVENT_KEY_DOWN ||
            type == SDL_EVENT_KEY_UP ||
+           type == SDL_EVENT_GAMEPAD_AXIS_MOTION ||
+           type == SDL_EVENT_GAMEPAD_TOUCHPAD_DOWN ||
+           type == SDL_EVENT_GAMEPAD_TOUCHPAD_UP ||
+           type == SDL_EVENT_GAMEPAD_TOUCHPAD_MOTION ||
            type == SDL_EVENT_GAMEPAD_BUTTON_DOWN ||
            type == SDL_EVENT_GAMEPAD_BUTTON_UP ||
+           type == SDL_EVENT_JOYSTICK_AXIS_MOTION ||
+           type == SDL_EVENT_JOYSTICK_BALL_MOTION ||
+           type == SDL_EVENT_JOYSTICK_HAT_MOTION ||
            type == SDL_EVENT_JOYSTICK_BUTTON_DOWN ||
            type == SDL_EVENT_JOYSTICK_BUTTON_UP ||
            type == SDL_EVENT_MOUSE_MOTION ||
@@ -62,8 +91,13 @@ bool Game::InputManager::isAddedEvent(Uint32 type_)
 {
     SDL_EventType type = static_cast<SDL_EventType>(type_);
     return type == SDL_EVENT_JOYSTICK_ADDED ||
-           type == SDL_EVENT_JOYSTICK_REMOVED ||
-           type == SDL_EVENT_GAMEPAD_ADDED ||
+           type == SDL_EVENT_GAMEPAD_ADDED;
+}
+
+bool Game::InputManager::isRemovedEvent(Uint32 type_)
+{
+    SDL_EventType type = static_cast<SDL_EventType>(type_);
+    return type == SDL_EVENT_JOYSTICK_REMOVED ||
            type == SDL_EVENT_GAMEPAD_REMOVED;
 }
 
@@ -99,24 +133,50 @@ void Game::InputManager::handleInput(SDL_Event *event)
     case SDL_EventType::SDL_EVENT_JOYSTICK_AXIS_MOTION:
         type = InputType::CONTROLLER_AXIS;
         break;
-    // case SDL_EventType::SDL_EVENT_GAMEPAD_TOUCHPAD_MOTION:
+    case SDL_EventType::SDL_EVENT_JOYSTICK_HAT_MOTION:
+        // Cruceta (d-pad) del joystick
+        type = InputType::CONTROLLER_AXIS;
+        break;
     case SDL_EventType::SDL_EVENT_MOUSE_MOTION:
         type = InputType::MOUSE_MOVED;
         break;
-    // case SDL_EventType::SDL_EVENT_GAMEPAD_TOUCHPAD_DOWN:
     case SDL_EventType::SDL_EVENT_MOUSE_BUTTON_DOWN:
         type = InputType::MOUSE_PRESSED;
         break;
-    // case SDL_EventType::SDL_EVENT_GAMEPAD_TOUCHPAD_UP:
     case SDL_EventType::SDL_EVENT_MOUSE_BUTTON_UP:
         type = InputType::MOUSE_RELEASED;
         break;
     }
 
-    // Manejo de eventos de gamepad
+    // Manejo de eventos de gamepad/joystick
     if (type == InputType::CONTROLLER_AXIS)
     {
-        this->event = new InputEvent(type, static_cast<SDL_GamepadAxis>(event->gaxis.axis));
+        if (event->type == SDL_EVENT_GAMEPAD_AXIS_MOTION)
+        {
+            // Palancas analógicas del gamepad
+            int axis = event->gaxis.axis;
+            int value = event->gaxis.value;
+            SDL_Log("Gamepad axis %d value: %d", axis, value);
+            // Puedes guardar el valor en tu InputEvent personalizado si lo deseas
+            this->event = new InputEvent(type, static_cast<SDL_GamepadAxis>(axis));
+        }
+        else if (event->type == SDL_EVENT_JOYSTICK_AXIS_MOTION)
+        {
+            // Palancas analógicas del joystick
+            int axis = event->jaxis.axis;
+            int value = event->jaxis.value;
+            SDL_Log("Joystick axis %d value: %d", axis, value);
+            this->event = new InputEvent(type, static_cast<SDL_GamepadAxis>(axis));
+        }
+        else if (event->type == SDL_EVENT_JOYSTICK_HAT_MOTION)
+        {
+            // Cruceta (d-pad) del joystick
+            int hat = event->jhat.hat;
+            int value = event->jhat.value;
+            SDL_Log("Joystick hat %d value: %d (d-pad)", hat, value);
+            // Puedes guardar el valor en tu InputEvent personalizado si lo deseas
+            this->event = new InputEvent(type, static_cast<SDL_GamepadAxis>(hat));
+        }
     }
     else if (
         type == InputType::CONTROLLER_BUTTON_PRESSED ||
@@ -153,8 +213,40 @@ void Game::InputManager::handleInput(SDL_Event *event)
 
 void Game::InputManager::handleDevice(SDL_Event *event)
 {
-    if (!isAddedEvent(event->type))
+    bool added = isAddedEvent(event->type);
+    bool removed = isRemovedEvent(event->type);
+    if (!added && !removed)
         return;
 
-    // Configure added device
+    int count = 0;
+    gamepads_ids = SDL_GetGamepads(&count);
+
+    if (added)
+    {
+        // Conectar el nuevo gamepad
+        for (int i = 0; i < count; i++)
+        {
+            SDL_Gamepad *gamepd = SDL_OpenGamepad(gamepads_ids[i]);
+            if (gamepad == nullptr)
+            {
+                gamepad = gamepd;
+                SDL_Log("Gamepad connected: %s\n", SDL_GetGamepadName(gamepd));
+            }
+            else
+            {
+                // Cierra otros gamepads abiertos para evitar fugas
+                SDL_CloseGamepad(gamepd);
+            }
+        }
+    }
+    else if (removed)
+    {
+        // Desconectar el gamepad actual
+        if (gamepad != nullptr)
+        {
+            SDL_Log("Gamepad disconnected: %s\n", SDL_GetGamepadName(gamepad));
+            SDL_CloseGamepad(gamepad);
+            gamepad = nullptr;
+        }
+    }
 }
